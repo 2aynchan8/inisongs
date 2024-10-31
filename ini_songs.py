@@ -15,9 +15,27 @@ uploaded_file = st.file_uploader("Choose an Excel file", type="xlsx")
 
 if uploaded_file is not None:
     df = pd.read_excel(uploaded_file, sheet_name='Sheet1')
+    
+    items = df.iloc[:, 0].dropna().tolist()
+    points = {item: 0 for item in items}
+    rounds = len(items) * 2
 
+    for _ in range(rounds):
+        item1, item2 = random.sample(items, 2)
+        choice = st.radio(f"Choose 1: {item1} or 2: {item2}", options=[1, 2])
+        
+        if choice == 1:
+            points[item1] += 1
+        elif choice == 2:
+            points[item2] += 1
+
+    ranking = sorted(points.items(), key=lambda x: x[1], reverse=True)
+    
+    st.write("Ranking:")
+    for i, (item, score) in enumerate(ranking, start=1):
+        st.write(f"{i}位: {item} - {score}点")
 else:
-    st.warning("ファイルをアップロードしてください。")
+    st.warning("Excelファイルをアップロードしてください。")
 
 items = df.iloc[:, 0].dropna().tolist()
 
